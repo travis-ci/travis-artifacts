@@ -1,0 +1,11 @@
+#!/usr/bin/env ruby
+
+$:.unshift(File.expand_path('../../lib', __FILE__))
+
+require 'bundler/setup'
+require 'irb'
+require 'irb/completion'
+require 'travis/artifacts'
+ARGV.clear
+IRB.start
+
