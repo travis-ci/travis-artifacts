@@ -1,2 +1,2 @@
 language: 'ruby'
-script: 'bin/rspec spec'
+script: 'bundle exec rspec spec'
