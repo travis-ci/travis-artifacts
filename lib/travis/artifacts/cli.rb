@@ -1,16 +1,6 @@
 require 'optparse'
 
 module Travis::Artifacts
-  class Path < Struct.new(:from, :to, :root)
-    def fullpath
-      if from =~ /^\//
-        from
-      else
-        File.join(root, from)
-      end
-    end
-  end
-
   class Cli
     attr_reader :options, :argv, :paths
     attr_accessor :command

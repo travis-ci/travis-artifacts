@@ -5,6 +5,7 @@ module Travis
     autoload :Cli,      'travis/artifacts/cli'
     autoload :Uploader, 'travis/artifacts/uploader'
     autoload :Artifact, 'travis/artifacts/artifact'
+    autoload :Path,     'travis/artifacts/path'
 
     def self.aws_config
       { aws_access_key_id: ENV['ARTIFACTS_AWS_ACCESS_KEY_ID'],

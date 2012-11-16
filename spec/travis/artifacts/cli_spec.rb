@@ -3,6 +3,8 @@ require 'spec_helper'
 describe Travis::Artifacts::Cli do
   let(:cli) { described_class.new(argv) }
 
+  before { cli.stub(:upload) }
+
   context 'with multiple paths' do
     let(:argv) { ['upload', '--path', 'path/to/foo', '--path', 'path/to/bar:bar'] }
 

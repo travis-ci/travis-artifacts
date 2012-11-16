@@ -51,6 +51,20 @@ module Travis::Artifacts
         end
       end
 
+      context 'with destination path and directory' do
+        let(:paths) { [Path.new('files/logs', 'logs', root)] }
+
+        it 'resolves paths into files to upload' do
+          files = [
+            'logs/bar.log',
+            'logs/foo.log'
+          ]
+          files.map! { |file| Artifact.new(File.join(root, 'files', file), "#{file}") }
+
+          uploader.files.should == files
+        end
+      end
+
       context 'with individual files' do
         let(:paths) {
           [Path.new('files/logs/bar.log', nil, root),
