@@ -5,6 +5,22 @@ describe Travis::Artifacts::Cli do
 
   before { cli.stub(:upload) }
 
+  context 'with --fetch-config' do
+    let(:argv) { ['upload', '--fetch-config'] }
+    let(:config) { { 'artifacts' => ['path/to/foo:bar'] } }
+
+    before do
+      client = mock('client')
+      client.should_receive(:fetch_config).and_return(config)
+      cli.client = client
+      cli.start
+    end
+
+    it 'fetches config from api' do
+      cli.paths.map { |p| [p.from, p.to] }.should == [['path/to/foo', 'bar']]
+    end
+  end
+
   context 'with multiple paths' do
     let(:argv) { ['upload', '--path', 'path/to/foo', '--path', 'path/to/bar:bar'] }
 

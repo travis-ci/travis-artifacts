@@ -3,7 +3,7 @@ require 'optparse'
 module Travis::Artifacts
   class Cli
     attr_reader :options, :argv, :paths
-    attr_accessor :command
+    attr_accessor :command, :client
 
     VALID_COMMANDS = ['upload']
 
@@ -11,6 +11,7 @@ module Travis::Artifacts
       @argv    = argv || ARGV
       @options = { :paths => [] }
       @paths   = []
+      @client  = Travis::Client.new
     end
 
     # I would like to use option parser for now, to keep
@@ -47,7 +48,14 @@ module Travis::Artifacts
     end
 
     def create_paths
-      options[:paths].each do |path|
+      _paths = if options[:fetch_config]
+        config = client.fetch_config(job_id)
+        config['artifacts']
+      else
+        options[:paths]
+      end
+
+      _paths.each do |path|
         from, to = path.split(':')
         paths << Path.new(from, to, root)
       end
@@ -76,6 +84,10 @@ module Travis::Artifacts
 
           opt.on('-j', '--job-id JOB_ID', 'id of the current job') do |job_id|
             options[:job_id] = job_id
+          end
+
+          opt.on('--fetch-config', 'gets config from travis api') do |fetch_config|
+            options[:fetch_config] = true
           end
 
           opt.on('--root ROOT', 'root directory for relative paths') do |root|
