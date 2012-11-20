@@ -3,6 +3,8 @@ require 'fog'
 
 module Travis::Artifacts
   class Uploader
+    include Travis::Artifacts::Logger
+
     attr_accessor :paths, :job_id
 
     def initialize(paths, job_id)
@@ -10,20 +12,10 @@ module Travis::Artifacts
       self.job_id = job_id
     end
 
-    def upload
+    def upload_files
       files.each do |file|
-        bucket.files.create({
-          key: File.join(prefix, file.destination),
-          public: true,
-          body: file.read,
-          content_type: file.content_type,
-          metadata: { "Cache-Control" => 'public, max-age=315360000'}
-        })
+        upload_file(file)
       end
-    end
-
-    def prefix
-      "artifacts/#{job_id}"
     end
 
     def files
@@ -57,7 +49,42 @@ module Travis::Artifacts
       files
     end
 
+
+    def upload_file(file)
+      retries = 0
+
+      begin
+        upload(file)
+      rescue StandardError => e
+        if retries < 3
+          logger.info "Attempt to upload failed, retrying"
+          retries += 1
+          retry
+        else
+          raise
+        end
+      end
+    end
+
+    def upload(file)
+      destination = File.join(prefix, file.destination)
+
+      logger.info "Uploading file #{file.source} to #{destination}"
+
+      bucket.files.create({
+        key: destination,
+        public: true,
+        body: file.read,
+        content_type: file.content_type,
+        metadata: { "Cache-Control" => 'public, max-age=315360000'}
+      })
+    end
+
     private
+
+    def prefix
+      "artifacts/#{job_id}"
+    end
 
     def bucket
       @bucket ||= s3.directories.get(Travis::Artifacts.bucket_name)

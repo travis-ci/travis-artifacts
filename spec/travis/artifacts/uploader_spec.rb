@@ -6,10 +6,22 @@ module Travis::Artifacts
     let(:paths)    { [] }
     let(:job_id)   { 1 }
 
-    describe '#upload' do
+    describe '#upload_file' do
+      it 'retries 3 times before giving up' do
+        file = Artifact.new('source/file.png', 'destination/file.png')
+
+        uploader.should_receive(:upload).exactly(4).times.and_raise(StandardError)
+
+        expect {
+          uploader.upload_file(file)
+        }.to raise_error(StandardError)
+      end
+    end
+
+    describe '#upload_files' do
       it 'uploads file to S3' do
         files = [
-          Artifact.new('source/path.png', 'destination/path')
+          Artifact.new('source/path.png', 'destination/path.png')
         ]
         files[0].stub(read: 'contents')
         uploader.stub(files: files)
@@ -20,7 +32,7 @@ module Travis::Artifacts
         bucket.stub(files: bucket_files)
 
         bucket_files.should_receive(:create).with({
-          key: 'artifacts/1/destination/path',
+          key: 'artifacts/1/destination/path.png',
           public: true,
           body: 'contents',
           content_type: 'image/png',
@@ -28,7 +40,7 @@ module Travis::Artifacts
 
         })
 
-        uploader.upload
+        uploader.upload_files
       end
     end
 
@@ -88,7 +100,6 @@ module Travis::Artifacts
       context 'with multilevel directory and to' do
         let(:paths) {
           [Path.new('files/foo', 'foo1', root)]
-
         }
 
         it 'resolves paths into files to upload' do
