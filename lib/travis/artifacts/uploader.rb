@@ -30,20 +30,27 @@ module Travis::Artifacts
       files = []
 
       paths.each do |artifact_path|
-        root = artifact_path.root
         to   = artifact_path.to
+        from = artifact_path.from
+        root = artifact_path.root
+
+        if artifact_path.directory?
+          root = File.join(root, from)
+          root << '/' unless root =~ /\/$/
+        end
+
         Find.find(artifact_path.fullpath) do |path|
+          next unless File.file? path
+
           relative = path.sub(/#{root}\/?/, '')
 
-          if File.file?(path)
-            destination = if !to
-              relative
-            else
-              artifact_path.directory? ? File.join(to, File.basename(relative)) : to
-            end
-
-            files << Artifact.new(path, destination)
+          destination = if to
+            artifact_path.directory? ? File.join(to, relative) : to
+          else
+            relative
           end
+
+          files << Artifact.new(path, destination)
         end
       end
 

@@ -45,7 +45,7 @@ module Travis::Artifacts
             'files/logs/foo.log',
             'files/output.txt'
           ]
-          files.map! { |file| Artifact.new(File.join(root, '.', file), "./#{file}") }
+          files.map! { |file| Artifact.new(File.join(root, '.', file), file) }
 
           uploader.files.should == files
         end
@@ -82,6 +82,17 @@ module Travis::Artifacts
           ]
 
           uploader.files.should == files
+        end
+      end
+
+      context 'with multilevel directory and to' do
+        let(:paths) {
+          [Path.new('files/foo', 'foo1', root)]
+
+        }
+
+        it 'resolves paths into files to upload' do
+          uploader.files.should == [Artifact.new(File.join(root, 'files/foo/bar/baz.txt'), 'foo1/bar/baz.txt')]
         end
       end
     end
