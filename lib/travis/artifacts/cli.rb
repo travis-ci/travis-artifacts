@@ -47,15 +47,17 @@ module Travis::Artifacts
       end
     end
 
-    def create_paths
-      _paths = if options[:fetch_config]
+    def fetch_paths
+      if options[:fetch_config]
         config = client.fetch_config(job_id)
-        config['artifacts']
+        ConfigParser.new(config).paths
       else
         options[:paths]
       end
+    end
 
-      _paths.each do |path|
+    def create_paths
+      fetch_paths.each do |path|
         from, to = path.split(':')
         paths << Path.new(from, to, root)
       end

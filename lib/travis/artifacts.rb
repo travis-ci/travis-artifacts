@@ -2,11 +2,13 @@ module Travis
   autoload :Client, 'travis/client'
 
   module Artifacts
-    autoload :Cli,      'travis/artifacts/cli'
-    autoload :Uploader, 'travis/artifacts/uploader'
-    autoload :Artifact, 'travis/artifacts/artifact'
-    autoload :Path,     'travis/artifacts/path'
-    autoload :Logger,   'travis/artifacts/logger'
+    autoload :Cli,          'travis/artifacts/cli'
+    autoload :Uploader,     'travis/artifacts/uploader'
+    autoload :Artifact,     'travis/artifacts/artifact'
+    autoload :Path,         'travis/artifacts/path'
+    autoload :Logger,       'travis/artifacts/logger'
+    autoload :Test,         'travis/artifacts/test'
+    autoload :ConfigParser, 'travis/artifacts/config_parser'
 
     def self.aws_config
       { aws_access_key_id: ENV['ARTIFACTS_AWS_ACCESS_KEY_ID'],
