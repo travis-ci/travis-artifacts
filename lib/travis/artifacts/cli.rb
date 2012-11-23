@@ -29,13 +29,13 @@ module Travis::Artifacts
     end
 
     def upload
-      Uploader.new(paths, job_id).upload
+      Uploader.new(paths, config.prefix).upload
     end
 
     private
 
     def job_id
-      options[:job_id]
+      @job_id ||= Test.new.job_id
     end
 
     def execute_command
@@ -47,10 +47,16 @@ module Travis::Artifacts
       end
     end
 
+    def config
+      @config ||= begin
+        config = client.fetch_config(job_id)
+        ConfigParser.new(config)
+      end
+    end
+
     def fetch_paths
       if options[:fetch_config]
-        config = client.fetch_config(job_id)
-        ConfigParser.new(config).paths
+        config.paths
       else
         options[:paths]
       end
@@ -82,10 +88,6 @@ module Travis::Artifacts
 
           opt.on('--path PATH','path(s) to upload to a server') do |path|
             options[:paths] << path
-          end
-
-          opt.on('-j', '--job-id JOB_ID', 'id of the current job') do |job_id|
-            options[:job_id] = job_id
           end
 
           opt.on('--fetch-config', 'gets config from travis api') do |fetch_config|

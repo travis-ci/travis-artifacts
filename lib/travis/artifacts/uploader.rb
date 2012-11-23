@@ -5,11 +5,11 @@ module Travis::Artifacts
   class Uploader
     include Travis::Artifacts::Logger
 
-    attr_accessor :paths, :job_id
+    attr_reader :paths, :prefix
 
-    def initialize(paths, job_id)
-      self.paths  = paths
-      self.job_id = job_id
+    def initialize(paths, prefix)
+      @paths  = paths
+      @prefix = Prefix.new(prefix).to_s
     end
 
     def upload_files
@@ -82,8 +82,8 @@ module Travis::Artifacts
 
     private
 
-    def prefix
-      "artifacts/#{job_id}"
+    def job_id
+      test.job_id
     end
 
     def bucket

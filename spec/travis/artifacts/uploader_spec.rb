@@ -2,7 +2,7 @@ require 'spec_helper'
 
 module Travis::Artifacts
   describe Uploader do
-    let(:uploader) { Uploader.new(paths, job_id) }
+    let(:uploader) { Uploader.new(paths, 'artifacts/1') }
     let(:paths)    { [] }
     let(:job_id)   { 1 }
 

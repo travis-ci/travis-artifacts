@@ -17,11 +17,16 @@ module Travis::Artifacts
       let(:config) do
         {
           'artifacts' => {
+            'prefix' => 'artifacts/{{job_number}}',
             'artifacts' => ['regular-path'],
             'on_success' => ['on-success-path'],
             'on_failure' => ['on-failure-path']
           }
         }
+      end
+
+      it 'fetches prefix' do
+        parser.prefix.should == 'artifacts/{{job_number}}'
       end
 
       context 'with passing test' do

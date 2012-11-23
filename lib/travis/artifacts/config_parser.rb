@@ -15,6 +15,13 @@ module Travis::Artifacts
       paths
     end
 
+    def prefix
+      return unless hash?
+
+      artifacts['prefix']
+    end
+    alias prefix? prefix
+
     def regular
       wrap(hash? ? artifacts['artifacts'] : artifacts)
     end

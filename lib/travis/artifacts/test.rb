@@ -7,5 +7,21 @@ module Travis::Artifacts
     def failure?
       !success?
     end
+
+    def build_number
+      ENV['TRAVIS_BUILD_NUMBER']
+    end
+
+    def build_id
+      ENV['TRAVIS_BUILD_ID']
+    end
+
+    def job_number
+      ENV['TRAVIS_JOB_NUMBER']
+    end
+
+    def job_id
+      ENV['TRAVIS_JOB_ID']
+    end
   end
 end
