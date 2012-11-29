@@ -1,3 +1,11 @@
+PATH
+  remote: .
+  specs:
+    travis-artifacts (0.0.1)
+      faraday
+      faraday_middleware
+      fog
+
 GEM
   remote: http://rubygems.org/
   specs:
@@ -40,7 +48,5 @@ PLATFORMS
   ruby
 
 DEPENDENCIES
-  faraday
-  faraday_middleware
-  fog
   rspec
+  travis-artifacts!

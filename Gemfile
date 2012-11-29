@@ -1,8 +1,6 @@
 source :rubygems
 
-gem 'fog'
-gem 'faraday'
-gem 'faraday_middleware'
+gemspec
 
 group :test do
   gem 'rspec'
