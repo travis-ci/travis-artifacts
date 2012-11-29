@@ -29,14 +29,10 @@ module Travis::Artifacts
     end
 
     def upload
-      Uploader.new(paths, config.prefix).upload
+      Uploader.new(paths, options[:target_path]).upload
     end
 
     private
-
-    def job_id
-      @job_id ||= Test.new.job_id
-    end
 
     def execute_command
       if VALID_COMMANDS.include? command
@@ -47,19 +43,8 @@ module Travis::Artifacts
       end
     end
 
-    def config
-      @config ||= begin
-        config = client.fetch_config(job_id)
-        ConfigParser.new(config)
-      end
-    end
-
     def fetch_paths
-      if options[:fetch_config]
-        config.paths
-      else
-        options[:paths]
-      end
+      options[:paths]
     end
 
     def create_paths
@@ -90,8 +75,8 @@ module Travis::Artifacts
             options[:paths] << path
           end
 
-          opt.on('--fetch-config', 'gets config from travis api') do |fetch_config|
-            options[:fetch_config] = true
+          opt.on('--target-path TARGET_PATH', 'path to upload files to') do |target_path|
+            options[:target_path] = target_path
           end
 
           opt.on('--root ROOT', 'root directory for relative paths') do |root|

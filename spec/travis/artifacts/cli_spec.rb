@@ -4,28 +4,9 @@ module Travis::Artifacts
   describe Cli do
     let(:cli) { described_class.new(argv) }
 
-    before { cli.stub(:upload) }
-
-    context 'with --fetch-config' do
-      let(:argv) { ['upload', '--fetch-config'] }
-
-      before do
-        client = mock('client')
-        client.should_receive(:fetch_config).and_return({})
-        cli.client = client
-      end
-
-      it 'passes fetched config to ConfigParser' do
-        config_parser = mock('config_parser', paths: ['foo'])
-        ConfigParser.should_receive(:new).and_return(config_parser)
-
-        cli.start
-
-        cli.paths.map { |p| [p.from, p.to] }.should == [['foo', nil]]
-      end
-    end
 
     context 'with multiple paths' do
+      before { cli.stub(:upload) }
       let(:argv) { ['upload', '--path', 'path/to/foo', '--path', 'path/to/bar:bar'] }
 
       before { cli.start }
@@ -39,7 +20,19 @@ module Travis::Artifacts
       end
     end
 
+    describe 'upload' do
+      let(:argv) { ['upload', '--path', 'foo', '--target-path', 'bar'] }
+      it 'calls Uploader with given paths and target_path' do
+        uploader = mock('uploader')
+        Uploader.should_receive(:new).with([Path.new('foo', nil, Dir.pwd)], 'bar').and_return(uploader)
+        uploader.should_receive(:upload)
+
+        cli.start
+      end
+    end
+
     describe '#root' do
+      before { cli.stub(:upload) }
       before { cli.start }
 
       context 'with root passed as an argument' do
@@ -50,6 +43,7 @@ module Travis::Artifacts
       end
 
       context 'without root passed as an argument' do
+        before { cli.stub(:upload) }
         let(:argv) { ['upload'] }
         it 'returns cwd' do
           cli.root.should == Dir.pwd
@@ -58,6 +52,7 @@ module Travis::Artifacts
     end
 
     context 'with a command' do
+      before { cli.stub(:upload) }
       let(:argv) { ['upload'] }
 
       before { cli.start }

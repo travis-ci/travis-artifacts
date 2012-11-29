@@ -5,11 +5,11 @@ module Travis::Artifacts
   class Uploader
     include Travis::Artifacts::Logger
 
-    attr_reader :paths, :prefix
+    attr_reader :paths, :target_path
 
-    def initialize(paths, prefix)
+    def initialize(paths, target_path = nil)
       @paths  = paths
-      @prefix = Prefix.new(prefix).to_s
+      @target_path = target_path.to_s
     end
 
     def upload_files
@@ -67,7 +67,7 @@ module Travis::Artifacts
     end
 
     def upload(file)
-      destination = File.join(prefix, file.destination)
+      destination = File.join(target_path, file.destination)
 
       logger.info "Uploading file #{file.source} to #{destination}"
 
