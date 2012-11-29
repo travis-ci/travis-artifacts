@@ -12,4 +12,11 @@ Gem::Specification.new do |s|
   s.add_dependency 'fog'
   s.add_dependency 'faraday'
   s.add_dependency 'faraday_middleware'
+
+  s.add_development_dependency 'rspec'
+
+  s.files         = `git ls-files`.split($/)
+  s.executables   = s.files.grep(/^bin/).map{|f| File.basename(f) }
+  s.test_files    = s.files.grep(/^spec/)
+  s.require_paths = ['lib']
 end
