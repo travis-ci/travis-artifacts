@@ -13,7 +13,7 @@ module Travis::Artifacts
       @target_path = target_path || "artifacts/#{@test.build_number}/#{@test.job_number}"
     end
 
-    def upload_files
+    def upload
       files.each do |file|
         upload_file(file)
       end
@@ -55,7 +55,7 @@ module Travis::Artifacts
       retries = 0
 
       begin
-        upload(file)
+        _upload(file)
       rescue StandardError => e
         if retries < 3
           logger.info "Attempt to upload failed, retrying"
@@ -67,7 +67,7 @@ module Travis::Artifacts
       end
     end
 
-    def upload(file)
+    def _upload(file)
       destination = File.join(target_path, file.destination)
 
       logger.info "Uploading file #{file.source} to #{destination}"
