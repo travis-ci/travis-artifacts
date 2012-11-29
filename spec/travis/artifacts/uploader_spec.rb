@@ -15,6 +15,7 @@ module Travis::Artifacts
         uploader.target_path.should == 'artifacts/10/10.1'
       end
     end
+
     describe '#upload_file' do
       it 'retries 3 times before giving up' do
         file = Artifact.new('source/file.png', 'destination/file.png')
@@ -24,6 +25,22 @@ module Travis::Artifacts
         expect {
           uploader.upload_file(file)
         }.to raise_error(StandardError)
+      end
+
+      it 'simplifies excon error to not show request data' do
+        file = Artifact.new('source/file.png', 'destination/file.png')
+
+        request  = { :expects => 200 }
+        response = mock('response', :status => 500)
+        error_class = Class.new(Excon::Errors::HTTPStatusError)
+        my_error = error_class.new('message', request, response)
+        uploader.should_receive(:_upload).exactly(4).times.and_raise(my_error)
+
+        expect {
+          uploader.upload_file(file)
+        }.to raise_error { |e|
+          e.message.should == 'Expected(200) <=> Actual(500)'
+        }
       end
     end
 

@@ -62,7 +62,14 @@ module Travis::Artifacts
           retries += 1
           retry
         else
-          raise
+          if e.respond_to?(:request)
+            # we don't want to display sensitive data, make the error message simpler
+            request  = e.request
+            response = e.response
+            raise e.class.new("Expected(#{request[:expects].inspect}) <=> Actual(#{response.status})")
+          else
+            raise
+          end
         end
       end
     end
