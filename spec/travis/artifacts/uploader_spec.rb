@@ -23,20 +23,20 @@ module Travis::Artifacts
         files = [
           Artifact.new('source/path.png', 'destination/path.png')
         ]
-        files[0].stub(read: 'contents')
-        uploader.stub(files: files)
+        files[0].stub(:read => 'contents')
+        uploader.stub(:files => files)
 
         bucket       = mock('bucker')
         bucket_files = mock('bucket_files')
-        uploader.stub(bucket: bucket)
-        bucket.stub(files: bucket_files)
+        uploader.stub(:bucket => bucket)
+        bucket.stub(:files => bucket_files)
 
         bucket_files.should_receive(:create).with({
-          key: 'artifacts/1/destination/path.png',
-          public: true,
-          body: 'contents',
-          content_type: 'image/png',
-          metadata: {'Cache-Control' => 'public, max-age=315360000'}
+          :key => 'artifacts/1/destination/path.png',
+          :public => true,
+          :body => 'contents',
+          :content_type => 'image/png',
+          :metadata => {'Cache-Control' => 'public, max-age=315360000'}
 
         })
 
@@ -59,7 +59,7 @@ module Travis::Artifacts
           ]
           files.map! { |file| Artifact.new(File.join(root, '.', file), file) }
 
-          uploader.files.should == files
+          uploader.files.sort_by { |o| o.source }.should == files.sort_by { |o| o.source }
         end
       end
 
@@ -73,7 +73,7 @@ module Travis::Artifacts
           ]
           files.map! { |file| Artifact.new(File.join(root, 'files', file), "#{file}") }
 
-          uploader.files.should == files
+          uploader.files.sort_by { |o| o.source }.should == files.sort_by { |o| o.source }
         end
       end
 

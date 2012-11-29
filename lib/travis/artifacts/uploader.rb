@@ -72,11 +72,11 @@ module Travis::Artifacts
       logger.info "Uploading file #{file.source} to #{destination}"
 
       bucket.files.create({
-        key: destination,
-        public: true,
-        body: file.read,
-        content_type: file.content_type,
-        metadata: { "Cache-Control" => 'public, max-age=315360000'}
+        :key => destination,
+        :public => true,
+        :body => file.read,
+        :content_type => file.content_type,
+        :metadata => { "Cache-Control" => 'public, max-age=315360000'}
       })
     end
 
@@ -92,7 +92,7 @@ module Travis::Artifacts
 
     def s3
       @s3 ||= begin
-        config = { provider: 'AWS' }.merge Travis::Artifacts.aws_config
+        config = { :provider => 'AWS' }.merge Travis::Artifacts.aws_config
         Fog::Storage.new(config)
       end
     end

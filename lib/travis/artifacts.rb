@@ -12,9 +12,9 @@ module Travis
     autoload :Prefix,       'travis/artifacts/prefix'
 
     def self.aws_config
-      { aws_access_key_id: ENV['ARTIFACTS_AWS_ACCESS_KEY_ID'],
-        aws_secret_access_key: ENV['ARTIFACTS_AWS_SECRET_ACCESS_KEY'],
-        region: ENV['ARTIFACTS_AWS_REGION'] || 'us-east-1'
+      { :aws_access_key_id => ENV['ARTIFACTS_AWS_ACCESS_KEY_ID'],
+        :aws_secret_access_key => ENV['ARTIFACTS_AWS_SECRET_ACCESS_KEY'],
+        :region => ENV['ARTIFACTS_AWS_REGION'] || 'us-east-1'
       }
     end
 

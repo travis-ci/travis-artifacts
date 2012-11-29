@@ -26,7 +26,9 @@ module Travis
 
     http_methods = [:get, :post, :put, :patch, :delete, :head]
     http_methods.each do |method|
-      define_method(method) do |path, params = {}, headers = {}, &block|
+
+      define_method(method) do |*args, &block|
+        path, params, headers = *args
         connection.send(method, path, params, headers, &block)
       end
     end
