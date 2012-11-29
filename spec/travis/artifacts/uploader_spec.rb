@@ -4,8 +4,17 @@ module Travis::Artifacts
   describe Uploader do
     let(:uploader) { Uploader.new(paths, 'artifacts/1') }
     let(:paths)    { [] }
-    let(:job_id)   { 1 }
 
+    context 'without given target_path' do
+      let(:uploader) { Uploader.new(paths, nil) }
+
+      it 'sets a default' do
+        test = mock('test', :job_number => "10.1", :build_number => "10")
+        Test.stub(:new => test)
+
+        uploader.target_path.should == 'artifacts/10/10.1'
+      end
+    end
     describe '#upload_file' do
       it 'retries 3 times before giving up' do
         file = Artifact.new('source/file.png', 'destination/file.png')

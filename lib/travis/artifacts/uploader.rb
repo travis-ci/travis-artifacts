@@ -9,7 +9,8 @@ module Travis::Artifacts
 
     def initialize(paths, target_path = nil)
       @paths  = paths
-      @target_path = target_path.to_s
+      @test   = Test.new
+      @target_path = target_path || "artifacts/#{@test.build_number}/#{@test.job_number}"
     end
 
     def upload_files
