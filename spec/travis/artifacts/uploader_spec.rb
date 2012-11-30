@@ -20,7 +20,7 @@ module Travis::Artifacts
       it 'retries 3 times before giving up' do
         file = Artifact.new('source/file.png', 'destination/file.png')
 
-        uploader.should_receive(:_upload).exactly(4).times.and_raise(StandardError)
+        uploader.should_receive(:_upload).exactly(3).times.and_raise(StandardError)
 
         expect {
           uploader.upload_file(file)

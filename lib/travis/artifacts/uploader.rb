@@ -57,7 +57,7 @@ module Travis::Artifacts
       begin
         _upload(file)
       rescue StandardError => e
-        if retries < 3
+        if retries < 2
           logger.info "Attempt to upload failed, retrying"
           retries += 1
           retry
@@ -66,6 +66,7 @@ module Travis::Artifacts
             # we don't want to display sensitive data, make the error message simpler
             request  = e.request
             response = e.response
+            raise e
             raise e.class.new("Expected(#{request[:expects].inspect}) <=> Actual(#{response.status})")
           else
             raise
