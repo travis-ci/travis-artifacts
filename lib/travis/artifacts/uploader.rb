@@ -66,7 +66,6 @@ module Travis::Artifacts
             # we don't want to display sensitive data, make the error message simpler
             request  = e.request
             response = e.response
-            raise e
             raise e.class.new("Expected(#{request[:expects].inspect}) <=> Actual(#{response.status})")
           else
             raise
