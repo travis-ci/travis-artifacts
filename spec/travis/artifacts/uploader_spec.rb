@@ -34,7 +34,7 @@ module Travis::Artifacts
         response = mock('response', :status => 500)
         error_class = Class.new(Excon::Errors::HTTPStatusError)
         my_error = error_class.new('message', request, response)
-        uploader.should_receive(:_upload).exactly(4).times.and_raise(my_error)
+        uploader.should_receive(:_upload).exactly(3).times.and_raise(my_error)
 
         expect {
           uploader.upload_file(file)
