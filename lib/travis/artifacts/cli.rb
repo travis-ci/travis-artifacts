@@ -9,7 +9,7 @@ module Travis::Artifacts
 
     def initialize(argv = nil)
       @argv    = argv || ARGV
-      @options = { :paths => [] }
+      @options = { :paths => [], :non_public => false }
       @paths   = []
       @client  = Travis::Client.new
     end
@@ -29,7 +29,7 @@ module Travis::Artifacts
     end
 
     def upload
-      Uploader.new(paths, options[:target_path]).upload
+      Uploader.new(paths, options[:target_path], !options[:non_public]).upload
     end
 
     private
@@ -81,6 +81,10 @@ module Travis::Artifacts
 
           opt.on('--root ROOT', 'root directory for relative paths') do |root|
             options[:root] = root
+          end
+
+          opt.on('--non-public', 'make artifacts non-public') do |root|
+            options[:non_public] = true
           end
 
           opt.on('-h','--help','help') do
