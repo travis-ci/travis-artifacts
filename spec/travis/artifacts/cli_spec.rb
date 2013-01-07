@@ -24,7 +24,9 @@ module Travis::Artifacts
       let(:argv) { ['upload', '--path', 'foo', '--target-path', 'bar'] }
       it 'calls Uploader with given paths and target_path' do
         uploader = mock('uploader')
-        Uploader.should_receive(:new).with([Path.new('foo', nil, Dir.pwd)], 'bar').and_return(uploader)
+        Uploader.should_receive(:new).with([Path.new('foo', nil, Dir.pwd)], \
+                                          {:paths=>["foo"], :private=>false, :target_path=>"bar"}\
+                                          ).and_return(uploader)
         uploader.should_receive(:upload)
 
         cli.start
