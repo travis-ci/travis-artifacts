@@ -2,11 +2,11 @@ require 'spec_helper'
 
 module Travis::Artifacts
   describe Uploader do
-    let(:uploader) { Uploader.new(paths, 'artifacts/1') }
+    let(:uploader) { Uploader.new(paths, {:target_path =>'artifacts/1'}) }
     let(:paths)    { [] }
 
     context 'without given target_path' do
-      let(:uploader) { Uploader.new(paths, nil) }
+      let(:uploader) { Uploader.new(paths) }
 
       it 'sets a default' do
         test = mock('test', :job_number => "10.1", :build_number => "10")

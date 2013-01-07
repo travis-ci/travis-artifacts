@@ -7,11 +7,11 @@ module Travis::Artifacts
 
     attr_reader :paths, :target_path
 
-    def initialize(paths, target_path = nil, make_public = true)
+    def initialize(paths, options = {})
       @paths  = paths
       @test   = Test.new
-      @public = make_public
-      @target_path = target_path || "artifacts/#{@test.build_number}/#{@test.job_number}"
+      @public = ! (options[:private]||false)
+      @target_path = options[:target_path] || "artifacts/#{@test.build_number}/#{@test.job_number}"
     end
 
     def upload
