@@ -7,10 +7,11 @@ module Travis::Artifacts
 
     attr_reader :paths, :target_path
 
-    def initialize(paths, target_path = nil)
+    def initialize(paths, options = {})
       @paths  = paths
       @test   = Test.new
-      @target_path = target_path || "artifacts/#{@test.build_number}/#{@test.job_number}"
+      @public = ! (options[:private]||false)
+      @target_path = options[:target_path] || "artifacts/#{@test.build_number}/#{@test.job_number}"
     end
 
     def upload
@@ -77,11 +78,11 @@ module Travis::Artifacts
     def _upload(file)
       destination = File.join(target_path, file.destination)
 
-      logger.info "Uploading file #{file.source} to #{destination}"
+      logger.info "Uploading file #{file.source} to #{destination}, public: #{@public}"
 
       bucket.files.create({
         :key => destination,
-        :public => true,
+        :public => @public,
         :body => file.read,
         :content_type => file.content_type,
         :metadata => { "Cache-Control" => 'public, max-age=315360000'}
