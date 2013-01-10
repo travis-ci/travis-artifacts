@@ -2,7 +2,6 @@
 
 $: << File.expand_path('../../lib', __FILE__)
 
-require 'bundler/setup'
 require 'travis/artifacts'
 
 Travis::Artifacts::Cli.new(ARGV).start
