@@ -12,6 +12,7 @@ module Travis::Artifacts
       @test   = Test.new
       @public = ! (options[:private]||false)
       @target_path = options[:target_path] || "artifacts/#{@test.build_number}/#{@test.job_number}"
+      @cache_control = !@public ? 'private' : options[:cache_control] || 'public, max-age=315360000'
     end
 
     def upload
@@ -85,7 +86,7 @@ module Travis::Artifacts
         :public => @public,
         :body => file.read,
         :content_type => file.content_type,
-        :metadata => { "Cache-Control" => 'public, max-age=315360000'}
+        :metadata => { "Cache-Control" => @cache_control }
       })
     end
 

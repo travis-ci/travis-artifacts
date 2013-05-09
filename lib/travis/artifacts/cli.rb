@@ -87,6 +87,11 @@ module Travis::Artifacts
             options[:private] = true
           end
 
+          opt.on('--cache-control CACHE_CONTROL_VALUE',
+                 'set custom cache control metadata value') do |value|
+            options[:cache_control] = value
+          end
+
           opt.on('-h','--help','help') do
             puts @opt_parser
           end
