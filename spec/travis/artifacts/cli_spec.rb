@@ -21,11 +21,15 @@ module Travis::Artifacts
     end
 
     describe 'upload' do
-      let(:argv) { ['upload', '--path', 'foo', '--target-path', 'bar'] }
-      it 'calls Uploader with given paths and target_path' do
+      let(:argv) do
+        ['upload', '--path', 'foo', '--target-path', 'bar', '--cache-control', 'public, max-age=3600']
+      end
+
+      it 'calls Uploader with given paths, target_path, and cache_control' do
         uploader = mock('uploader')
         Uploader.should_receive(:new).with([Path.new('foo', nil, Dir.pwd)], \
-                                          {:paths=>["foo"], :private=>false, :target_path=>"bar"}\
+                                          {:paths=>["foo"], :private=>false, :target_path=>"bar",
+                                           :cache_control=>'public, max-age=3600'}\
                                           ).and_return(uploader)
         uploader.should_receive(:upload)
 
