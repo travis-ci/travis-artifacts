@@ -12,7 +12,7 @@ module Travis::Artifacts
       @test   = Test.new
       @public = ! (options[:private]||false)
       @target_path = options[:target_path] || "artifacts/#{@test.build_number}/#{@test.job_number}"
-      @cache_control = options[:cache_control] || 'public, max-age=315360000'
+      @cache_control = !@public ? 'private' : options[:cache_control] || 'public, max-age=315360000'
     end
 
     def upload
@@ -86,7 +86,7 @@ module Travis::Artifacts
         :public => @public,
         :body => file.read,
         :content_type => file.content_type,
-        :metadata => { "Cache-Control" => cache_control }
+        :metadata => { "Cache-Control" => @cache_control }
       })
     end
 
@@ -105,10 +105,6 @@ module Travis::Artifacts
         config = { :provider => 'AWS' }.merge Travis::Artifacts.aws_config
         Fog::Storage.new(config)
       end
-    end
-
-    def cache_control
-      @public ? @cache_control.to_s : 'private'
     end
   end
 end
