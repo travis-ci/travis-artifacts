@@ -45,18 +45,21 @@ module Travis::Artifacts
     end
 
     describe '#upload' do
-      it 'uploads file to S3' do
+      let(:bucket) { mock('bucket') }
+      let(:bucket_files) { mock('bucket_files') }
+
+      before do
         files = [
           Artifact.new('source/path.png', 'destination/path.png')
         ]
         files[0].stub(:read => 'contents')
         uploader.stub(:files => files)
 
-        bucket       = mock('bucker')
-        bucket_files = mock('bucket_files')
         uploader.stub(:bucket => bucket)
         bucket.stub(:files => bucket_files)
+      end
 
+      it 'uploads file to S3' do
         bucket_files.should_receive(:create).with({
           :key => 'artifacts/1/destination/path.png',
           :public => true,
@@ -67,6 +70,70 @@ module Travis::Artifacts
         })
 
         uploader.upload
+      end
+
+      context 'with private set to true' do
+        let(:uploader) do
+          Uploader.new(paths, {
+            :target_path =>'artifacts/1',
+            :private => true,
+            :cache_control => 'public, but really ignored'
+          })
+        end
+
+        it 'sets cache control metadata to private' do
+          bucket_files.should_receive(:create).with({
+            :key => 'artifacts/1/destination/path.png',
+            :public => false,
+            :body => 'contents',
+            :content_type => 'image/png',
+            :metadata => {'Cache-Control' => 'private'}
+
+          })
+
+          uploader.upload
+        end
+      end
+
+      context 'with a custom cache control option' do
+        let(:custom_cache_control) do
+          [
+            'private',
+            'public, max-age=3600',
+            'public',
+          ].send(RUBY_VERSION >= '1.9' ? :sample : :choice)
+        end
+
+        let(:uploader) do
+          Uploader.new(paths, {
+            :target_path =>'artifacts/1',
+            :cache_control => custom_cache_control
+          })
+        end
+
+        it 'uploads file to S3 with custom cache control header metadata' do
+          files = [
+            Artifact.new('source/path.png', 'destination/path.png')
+          ]
+          files[0].stub(:read => 'contents')
+          uploader.stub(:files => files)
+
+          bucket       = mock('bucket')
+          bucket_files = mock('bucket_files')
+          uploader.stub(:bucket => bucket)
+          bucket.stub(:files => bucket_files)
+
+          bucket_files.should_receive(:create).with({
+            :key => 'artifacts/1/destination/path.png',
+            :public => true,
+            :body => 'contents',
+            :content_type => 'image/png',
+            :metadata => {'Cache-Control' => custom_cache_control}
+
+          })
+
+          uploader.upload
+        end
       end
     end
 
