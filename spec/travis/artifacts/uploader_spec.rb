@@ -101,7 +101,7 @@ module Travis::Artifacts
             'private',
             'public, max-age=3600',
             'public',
-          ].send(RUBY_VERSION > '1.8' ? :sample : :choice)
+          ].send(RUBY_VERSION >= '1.9' ? :sample : :choice)
         end
 
         let(:uploader) do
