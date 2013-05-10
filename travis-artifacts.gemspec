@@ -1,6 +1,6 @@
 Gem::Specification.new do |s|
   s.name        = 'travis-artifacts'
-  s.version     = '0.0.3'
+  s.version     = '0.1.0'
 
   s.description = 'Travis build artifacts tools'
   s.summary     = s.description
