@@ -55,11 +55,9 @@ module Travis::Artifacts
     describe '#upload' do
       let(:bucket) { mock('bucket') }
       let(:bucket_files) { mock('bucket_files') }
+      let(:files) { [Artifact.new('source/path.png', 'destination/path.png')] }
 
       before do
-        files = [
-          Artifact.new('source/path.png', 'destination/path.png')
-        ]
         files[0].stub(:read => 'contents')
         uploader.stub(:files => files)
 
@@ -80,12 +78,13 @@ module Travis::Artifacts
         uploader.upload
       end
 
-      context 'with an empty string as target_path' do
+      context 'with a top-level destination and empty string as target_path' do
         let(:uploader) { Uploader.new(paths, {:target_path => ''}) }
+        let(:files) { [Artifact.new('source/path.png', 'path.png')] }
 
         it 'uploads file to the root of the S3 bucket' do
           bucket_files.should_receive(:create).with({
-            :key => '/destination/path.png',
+            :key => 'path.png',
             :public => true,
             :body => 'contents',
             :content_type => 'image/png',
