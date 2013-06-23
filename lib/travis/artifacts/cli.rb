@@ -37,9 +37,10 @@ module Travis::Artifacts
     def execute_command
       if VALID_COMMANDS.include? command
         send(command)
+        return 0
       else
         STDERR.puts 'Could not find command'
-        exit 1
+        return 1
       end
     end
 

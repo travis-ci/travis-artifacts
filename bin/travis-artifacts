@@ -4,4 +4,4 @@ $: << File.expand_path('../../lib', __FILE__)
 
 require 'travis/artifacts'
 
-Travis::Artifacts::Cli.new(ARGV).start
+exit Travis::Artifacts::Cli.new(ARGV).start
