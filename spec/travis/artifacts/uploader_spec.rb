@@ -16,6 +16,14 @@ module Travis::Artifacts
       end
     end
 
+    context 'when given an empty string as target_path' do
+      let(:uploader) { Uploader.new(paths, {:target_path => ''}) }
+
+      it 'leaves it alone' do
+        uploader.target_path.should == ''
+      end
+    end
+
     describe '#upload_file' do
       it 'retries 3 times before giving up' do
         file = Artifact.new('source/file.png', 'destination/file.png')
@@ -47,11 +55,9 @@ module Travis::Artifacts
     describe '#upload' do
       let(:bucket) { mock('bucket') }
       let(:bucket_files) { mock('bucket_files') }
+      let(:files) { [Artifact.new('source/path.png', 'destination/path.png')] }
 
       before do
-        files = [
-          Artifact.new('source/path.png', 'destination/path.png')
-        ]
         files[0].stub(:read => 'contents')
         uploader.stub(:files => files)
 
@@ -70,6 +76,23 @@ module Travis::Artifacts
         })
 
         uploader.upload
+      end
+
+      context 'with a top-level destination and empty string as target_path' do
+        let(:uploader) { Uploader.new(paths, {:target_path => ''}) }
+        let(:files) { [Artifact.new('source/path.png', 'path.png')] }
+
+        it 'uploads file to the root of the S3 bucket' do
+          bucket_files.should_receive(:create).with({
+            :key => 'path.png',
+            :public => true,
+            :body => 'contents',
+            :content_type => 'image/png',
+            :metadata => {'Cache-Control' => 'public, max-age=315360000'}
+          })
+
+          uploader.upload
+        end
       end
 
       context 'with private set to true' do
