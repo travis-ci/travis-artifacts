@@ -9,9 +9,9 @@ Gem::Specification.new do |s|
   s.authors     = ['admin@travis-ci.org']
   s.email       = 'admin@travis-ci.org'
 
-  s.add_dependency 'fog'
-  s.add_dependency 'faraday'
-  s.add_dependency 'faraday_middleware'
+  s.add_dependency 'fog', '~> 1.7'
+  s.add_dependency 'faraday', '~> 0.8'
+  s.add_dependency 'faraday_middleware', '~> 0.9'
 
   s.add_development_dependency 'rspec'
 
