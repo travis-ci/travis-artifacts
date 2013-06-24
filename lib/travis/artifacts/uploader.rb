@@ -77,7 +77,7 @@ module Travis::Artifacts
     end
 
     def _upload(file)
-      destination = File.join(target_path, file.destination)
+      destination = File.join(target_path, file.destination).sub(/^\//, '')
 
       logger.info "Uploading file #{file.source} to #{destination}, public: #{@public}"
 
