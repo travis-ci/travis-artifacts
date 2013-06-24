@@ -67,5 +67,40 @@ module Travis::Artifacts
         cli.command.should == 'upload'
       end
     end
+
+    context 'with a valid command' do
+      let(:argv) { ['upload'] }
+      let(:retcode) { cli.start }
+      before { cli.stub(:upload) }
+
+      it 'returns 0' do
+        retcode.should == 0
+      end
+    end
+
+    context 'with an invalid command' do
+      let(:argv) { ['derf'] }
+      let(:retcode) { cli.start }
+
+      it 'returns 1' do
+        STDERR.stub(:puts)
+        retcode.should == 1
+      end
+
+      it 'tells us about it' do
+        STDERR.should_receive(:puts).with(/Could not find command/)
+        cli.start
+      end
+    end
+
+    context 'with an internal error' do
+      let(:argv) { ['upload'] }
+      let(:custom_error) { Class.new(Exception) }
+      before { cli.stub(:upload) { raise custom_error } }
+
+      it 'allows it to bubble up' do
+        expect { cli.start }.to raise_error(custom_error)
+      end
+    end
   end
 end
