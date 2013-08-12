@@ -1,7 +1,4 @@
 #!/usr/bin/env ruby
-
 $: << File.expand_path('../../lib', __FILE__)
-
 require 'travis/artifacts'
-
 exit Travis::Artifacts::Cli.new(ARGV).start

@@ -5,13 +5,14 @@ module Travis::Artifacts
   class Uploader
     include Travis::Artifacts::Logger
 
-    attr_reader :paths, :target_path
+    attr_reader :paths, :target_path, :clone_path
 
     def initialize(paths, options = {})
       @paths  = paths
       @test   = Test.new
       @public = ! (options[:private]||false)
       @target_path = options[:target_path] || "artifacts/#{@test.build_number}/#{@test.job_number}"
+      @clone_path = options[:clone_path]
       @cache_control = !@public ? 'private' : options[:cache_control] || 'public, max-age=315360000'
     end
 
@@ -59,6 +60,7 @@ module Travis::Artifacts
       begin
         _upload(file)
       rescue StandardError => e
+        puts e.inspect
         if retries < 2
           logger.info "Attempt to upload failed, retrying"
           retries += 1
@@ -76,9 +78,21 @@ module Travis::Artifacts
       end
     end
 
+    def _clone(s3_source_path, filename)
+      destination = File.join(clone_path, filename).sub(/^\//, '')
+      logger.info "Cloning to #{destination}, public: #{@public}"
+
+      bucket.files.create({
+          :key => destination,
+          :public => @public,
+          :body => "",
+          :metadata => { "etag"=>"", "x-amz-copy-source" => "#{Travis::Artifacts.bucket_name}/#{s3_source_path}" }
+        })
+    end
+
+
     def _upload(file)
       destination = File.join(target_path, file.destination).sub(/^\//, '')
-
       logger.info "Uploading file #{file.source} to #{destination}, public: #{@public}"
 
       bucket.files.create({
@@ -88,6 +102,7 @@ module Travis::Artifacts
         :content_type => file.content_type,
         :metadata => { "Cache-Control" => @cache_control }
       })
+      _clone(destination, file.destination) unless clone_path.nil?
     end
 
     private
