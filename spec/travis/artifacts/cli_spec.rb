@@ -37,7 +37,15 @@ module Travis::Artifacts
       end
 
       context 'with clone path specified' do
-        pending
+        let(:argv) do
+          ['upload', '--path', 'foo', '--target-path', 'bar', '--cache-control', 'public, max-age=3600', "--clone-path", 'baz']
+        end
+
+        it "callls Uploader with the clone-path in addition to other parameters" do
+          Uploader.should_receive(:new).with(anything, hash_including(:clone_path => 'baz')).and_return double('uploader').as_null_object
+
+          cli.start
+        end
       end
 
     end
