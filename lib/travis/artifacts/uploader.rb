@@ -60,7 +60,6 @@ module Travis::Artifacts
       begin
         _upload(file)
       rescue StandardError => e
-        puts e.inspect
         if retries < 2
           logger.info "Attempt to upload failed, retrying"
           retries += 1
