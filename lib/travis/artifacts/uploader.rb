@@ -78,14 +78,14 @@ module Travis::Artifacts
     end
 
     def _clone(s3_source_path, filename)
-      destination = File.join(clone_path, filename).sub(/^\//, '')
-      logger.info "Cloning to #{destination}, public: #{@public}"
+      clone_destination = File.join(clone_path, filename).sub(/^\//, '')
+      logger.info "Cloning to #{clone_destination}, public: #{@public}"
 
       bucket.files.create({
-          :key => destination,
+          :key => clone_destination,
           :public => @public,
-          :body => "",
-          :metadata => { "etag"=>"", "x-amz-copy-source" => "#{Travis::Artifacts.bucket_name}/#{s3_source_path}" }
+          :body => '',
+          :metadata => { 'etag'=>'', 'x-amz-copy-source' => "#{Travis::Artifacts.bucket_name}/#{s3_source_path}" }
         })
     end
 
