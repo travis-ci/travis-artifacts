@@ -80,6 +80,10 @@ module Travis::Artifacts
             options[:target_path] = target_path
           end
 
+          opt.on('--clone-path CLONE_PATH', 'path to clone uploaded files to') do |clone_path|
+            options[:clone_path] = clone_path
+          end
+
           opt.on('--root ROOT', 'root directory for relative paths') do |root|
             options[:root] = root
           end

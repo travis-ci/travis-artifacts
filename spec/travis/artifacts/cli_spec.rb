@@ -26,7 +26,7 @@ module Travis::Artifacts
       end
 
       it 'calls Uploader with given paths, target_path, and cache_control' do
-        uploader = mock('uploader')
+        uploader = double('uploader')
         Uploader.should_receive(:new).with([Path.new('foo', nil, Dir.pwd)], \
                                           {:paths=>["foo"], :private=>false, :target_path=>"bar",
                                            :cache_control=>'public, max-age=3600'}\
@@ -35,6 +35,19 @@ module Travis::Artifacts
 
         cli.start
       end
+
+      context 'with clone path specified' do
+        let(:argv) do
+          ['upload', '--path', 'foo', '--target-path', 'bar', '--cache-control', 'public, max-age=3600', "--clone-path", 'baz']
+        end
+
+        it "calls Uploader with the clone-path in addition to other parameters" do
+          Uploader.should_receive(:new).with(anything, hash_including(:clone_path => 'baz')).and_return double('uploader').as_null_object
+
+          cli.start
+        end
+      end
+
     end
 
     describe '#root' do
