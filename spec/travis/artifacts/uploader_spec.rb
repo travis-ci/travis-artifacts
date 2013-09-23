@@ -9,7 +9,7 @@ module Travis::Artifacts
       let(:uploader) { Uploader.new(paths) }
 
       it 'sets a default' do
-        test = mock('test', :job_number => "10.1", :build_number => "10")
+        test = double('test', :job_number => "10.1", :build_number => "10")
         Test.stub(:new => test)
 
         uploader.target_path.should == 'artifacts/10/10.1'
@@ -39,7 +39,7 @@ module Travis::Artifacts
         file = Artifact.new('source/file.png', 'destination/file.png')
 
         request  = { :expects => 200 }
-        response = mock('response', :status => 500)
+        response = double('response', :status => 500)
         error_class = Class.new(Excon::Errors::HTTPStatusError)
         my_error = error_class.new('message', request, response)
         uploader.should_receive(:_upload).exactly(3).times.and_raise(my_error)
@@ -53,8 +53,8 @@ module Travis::Artifacts
     end
 
     describe '#upload' do
-      let(:bucket) { mock('bucket') }
-      let(:bucket_files) { mock('bucket_files') }
+      let(:bucket) { double('bucket') }
+      let(:bucket_files) { double('bucket_files') }
       let(:files) { [Artifact.new('source/path.png', 'destination/path.png')] }
 
       before do
@@ -118,6 +118,35 @@ module Travis::Artifacts
         end
       end
 
+      context 'with a clone path specified' do
+        let(:uploader) do
+          Uploader.new(paths, {
+            :target_path =>'artifacts/1',
+            :clone_path => 'artifacts/latest'
+          }) 
+        end
+        
+        it 'uploads file to S3 and clones it to a second remote location' do
+
+          bucket_files.should_receive(:create).with({
+            :key => 'artifacts/1/destination/path.png',
+            :public => true,
+            :body => 'contents',
+            :content_type => 'image/png',
+            :metadata => {'Cache-Control' => 'public, max-age=315360000'}
+          })
+          
+          bucket_files.should_receive(:create).with({
+            :key => 'artifacts/latest/destination/path.png',
+            :public => true,
+            :body => '',
+            :metadata => { 'etag'=>'', 'x-amz-copy-source' => '/artifacts/1/destination/path.png' }
+          })
+
+          uploader.upload
+        end
+      end
+
       context 'with a custom cache control option' do
         let(:custom_cache_control) do
           [
@@ -141,8 +170,8 @@ module Travis::Artifacts
           files[0].stub(:read => 'contents')
           uploader.stub(:files => files)
 
-          bucket       = mock('bucket')
-          bucket_files = mock('bucket_files')
+          bucket       = double('bucket')
+          bucket_files = double('bucket_files')
           uploader.stub(:bucket => bucket)
           bucket.stub(:files => bucket_files)
 
