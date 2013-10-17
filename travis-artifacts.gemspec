@@ -10,8 +10,8 @@ Gem::Specification.new do |s|
   s.email       = 'admin@travis-ci.org'
 
   s.add_dependency 'nokogiri', '1.5.10'
-  s.add_dependency 'fog', '~> 1.7'
-  s.add_dependency 'excon', '~> 0.26.0'
+  s.add_dependency 'fog', '1.15.0'
+  s.add_dependency 'excon', '0.25.0'
   s.add_dependency 'faraday', '~> 0.8'
   s.add_dependency 'faraday_middleware', '~> 0.9'
 
