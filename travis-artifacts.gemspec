@@ -11,7 +11,7 @@ Gem::Specification.new do |s|
 
   s.add_dependency 'nokogiri', '1.5.10'
   s.add_dependency 'fog', '1.15.0'
-  s.add_dependency 'excon', '0.25.0'
+  s.add_dependency 'excon', '0.25.1'
   s.add_dependency 'faraday', '~> 0.8'
   s.add_dependency 'faraday_middleware', '~> 0.9'
 
