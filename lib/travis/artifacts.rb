@@ -4,6 +4,7 @@ module Travis
   module Artifacts
     autoload :Cli,          'travis/artifacts/cli'
     autoload :Uploader,     'travis/artifacts/uploader'
+    autoload :Remover,      'travis/artifacts/remover'
     autoload :Artifact,     'travis/artifacts/artifact'
     autoload :Path,         'travis/artifacts/path'
     autoload :Logger,       'travis/artifacts/logger'

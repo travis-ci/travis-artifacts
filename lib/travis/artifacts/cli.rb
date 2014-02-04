@@ -5,7 +5,7 @@ module Travis::Artifacts
     attr_reader :options, :argv, :paths
     attr_accessor :command, :client
 
-    VALID_COMMANDS = ['upload']
+    VALID_COMMANDS = ['upload', 'remove']
 
     def initialize(argv = nil)
       @argv    = argv || ARGV
@@ -30,6 +30,10 @@ module Travis::Artifacts
 
     def upload
       Uploader.new(paths, options).upload
+    end
+
+    def remove
+      Remover.new(options).remove
     end
 
     private
@@ -65,14 +69,15 @@ module Travis::Artifacts
         options = self.options
 
         OptionParser.new do |opt|
-          opt.banner = 'Usage: travis-uploader COMMAND [OPTIONS]'
+          opt.banner = 'Usage: travis-artifacts COMMAND [OPTIONS]'
           opt.separator  ''
           opt.separator  'Commands'
           opt.separator  '     upload: upload files to server'
+          opt.separator  '     remove: remove files from server'
           opt.separator  ''
           opt.separator  'Options'
 
-          opt.on('--path PATH','path(s) to upload to a server') do |path|
+          opt.on('--path PATH','path(s) to upload to (remove from) a server') do |path|
             options[:paths] << path
           end
 
@@ -86,6 +91,10 @@ module Travis::Artifacts
 
           opt.on('--root ROOT', 'root directory for relative paths') do |root|
             options[:root] = root
+          end
+
+          opt.on('--mask', 'use mask for file to remove from a server') do |mask|
+            options[:mask] = true
           end
 
           opt.on('--private', 'make artifacts non-public') do |root|
