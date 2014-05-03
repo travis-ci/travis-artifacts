@@ -9,11 +9,11 @@ Gem::Specification.new do |s|
   s.authors     = ['admin@travis-ci.org']
   s.email       = 'admin@travis-ci.org'
 
-  s.add_dependency 'nokogiri', '1.5.10'
-  s.add_dependency 'fog', '1.15.0'
-  s.add_dependency 'excon', '0.25.1'
-  s.add_dependency 'faraday'
-  s.add_dependency 'faraday_middleware', '~> 0.9'
+  s.add_dependency 'nokogiri',           '~> 1.6.0'
+  s.add_dependency 'fog',                '~> 1.22.0'
+  s.add_dependency 'excon',              '~> 0.33.0'
+  s.add_dependency 'faraday',            '~> 0.9.0'
+  s.add_dependency 'faraday_middleware', '~> 0.9.0'
 
   s.add_development_dependency 'rspec'
 
