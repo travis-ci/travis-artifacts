@@ -1,5 +1,7 @@
 # Travis Artifacts
 
+:no_entry_sign: This project is no longer maintained.  Please see https://github.com/travis-ci/artifacts :no_entry_sign:
+
 If your tests produce files, for example stack traces or logs, you can
 easily upload them to Amazon S3.
 
