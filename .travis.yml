@@ -4,3 +4,5 @@ rvm:
   - 1.9.3
   - 2.0.0
   - jruby
+before_install:
+  - gem install rubygems-update -v 3.4.22
